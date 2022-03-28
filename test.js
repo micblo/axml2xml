@@ -1,4 +1,5 @@
 const fs = require('fs');
 const Axml2Xml = require('./index');
 
-Axml2Xml.parse(fs.readFileSync('./tests/AndroidManifest.xml'))
+const buf = fs.readFileSync('./tests/AndroidManifest.xml');
+console.log(Axml2Xml.convert(buf));
