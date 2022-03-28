@@ -1,7 +1,7 @@
 {
   "name": "axml2xml",
   "version": "1.0.0",
-  "description": "",
+  "description": "A library for decoding/convert .axml to .xml in JavaScript.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,7 +9,13 @@
   "keywords": [],
   "author": "micblo",
   "license": "MIT",
+  "repository": {
+    "url": "https://github.com/micblo/axml2xml.git"
+  },
   "dependencies": {
     "sprintf-js": "^1.1.2"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }
