@@ -1,3 +1,4 @@
+const {Axml2xml} = require("./index");
 const sprintf = require('sprintf-js').sprintf;
 
 const WORD_START_DOCUMENT = 0x00080003;
@@ -40,6 +41,7 @@ function analyse(buf, mListener) {
     let mStringsCount;
     let mStylesCount;
     let mStringsTable;
+    let mFlags;
 
     let mResCount;
     let mResourcesIds;
@@ -123,6 +125,7 @@ function analyse(buf, mListener) {
         const chunk = buf.readUInt32LE(mParserOffset + (WORD_SIZE));
         mStringsCount = buf.readUInt32LE(mParserOffset + (2 * WORD_SIZE));
         mStylesCount = buf.readUInt32LE(mParserOffset + (3 * WORD_SIZE));
+        mFlags = buf.readUInt32LE(mParserOffset + (4 * WORD_SIZE));
         const strOffset = mParserOffset
             + buf.readUInt32LE(mParserOffset + (5 * WORD_SIZE));
         const styleOffset = buf.readUInt32LE(mParserOffset + (6 * WORD_SIZE));
@@ -365,10 +368,19 @@ function analyse(buf, mListener) {
      * @return the String
      */
     function getStringFromStringTable(offset) {
-        const l = buf.readUInt16LE(offset);
-        offset += 2;
+        if (mFlags & 0x100) {
+            const s = buf.readUInt8(offset);
+            const l = buf.readUInt8(offset + 1);
+            offset += 2;
 
-        return utf16BytesToString(buf.slice(offset, offset + l*2));
+            return buf.slice(offset, offset + l).toString();
+        } else {
+            const l = buf.readUInt16LE(offset);
+            offset += 2;
+
+            const str = buf.slice(offset, offset + l*2);
+            return utf16BytesToString(str);
+        }
     }
 
     function utf16BytesToString(binaryStr) {
@@ -594,7 +606,7 @@ function convert(buf) {
     return xml.join('');
 }
 
-module.exports = {
+exports.Axml2xml = {
     analyse: analyse,
     parse: parse,
     convert: convert,
